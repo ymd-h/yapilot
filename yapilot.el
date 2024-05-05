@@ -62,6 +62,28 @@ Source code will be inserted at %s by `format' function."
   :type '(string)
   :group 'yapilot)
 
+(defcustom yapilot-generate-prompt
+  "Generate %1$s code based on the following instruction.
+You must generate only the source code.
+The code must not enclosed by ```.
+
+Instruction
+-----------
+%2$s
+"
+  "Prompt Template for Code Generation.
+
+Programming Language name will be inserted at %1$s,
+instruction at %2$s by `format' function."
+  :type '(string)
+  :group 'yapilot)
+
+(defvar yapilot--code-regexp
+  "```.*
+\\(\\(.*\n\\)*.*\\)
+```"
+  "Regular Expression to match code block returned from LLM.")
+
 (defun yapilot--validate ()
   "Validate provider."
   (if (null yapilot-llm-provider)
@@ -131,6 +153,28 @@ Argument END is region end."
   (interactive)
   (yapilot--review (buffer-string)))
 
+(defun yapilot--generate (language instruction)
+  "Generate LANGUAGE code based on INSTRUCTION."
+  (let* ((prompt (format yapilot-generate-prompt language instruction))
+         (response (yapilot--chat prompt)))
+    (if (string-match yapilot--code-regexp response)
+        (match-string 1 response)
+      response)))
+
+(defun yapilot-generate-region (start end)
+  "Generate code based on selected region.
+Argument START is region start.
+Argument END is region end."
+  (interactive "r")
+  (if (use-region-p)
+      (save-excursion
+        (goto-char end)
+        (insert (yapilot--generate
+         (if (listp mode-name)
+             (car mode-name)
+           mode-name)
+         (buffer-substring start end))))
+    (message "Region is not set")))
 
 (provide 'yapilot)
 ;;; yapilot.el ends here
