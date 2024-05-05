@@ -191,7 +191,7 @@ Unlike `yapilot-complete-region',
 generated code is inserted just after selected instruction."
   (interactive "r")
   (if (use-region-p)
-      (save-excursion
+      (progn
         (goto-char end)
         (insert (yapilot--generate
                  (yapilot--language)
