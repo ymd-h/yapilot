@@ -191,13 +191,16 @@ Argument END is region end."
   (interactive)
   (yapilot--review (buffer-string)))
 
-(defun yapilot--generate (language instruction)
-  "Generate LANGUAGE code based on INSTRUCTION."
-  (let* ((prompt (format yapilot-generate-prompt language instruction))
-         (response (yapilot--chat prompt)))
+(defun yapilot--generate-code (prompt)
+  "Generate code based on PROMPT"
+  (let ((response (yapilot--chat prompt)))
     (if (string-match yapilot--code-regexp response)
         (match-string 1 response)
       response)))
+
+(defun yapilot--generate (language instruction)
+  "Generate LANGUAGE code based on INSTRUCTION."
+  (yapilot--generate-code (format yapilot-generate-prompt language instruction)))
 
 (defun yapilot-generate-region (start end)
   "Generate code based on selected region.
@@ -217,11 +220,7 @@ generated code is inserted just after selected instruction."
 
 (defun yapilot--complete (language code)
   "Complete LANGUAGE CODE."
-  (let* ((prompt (format yapilot-complete-prompt language code))
-         (response (yapilot--chat prompt)))
-    (if (string-match yapilot--code-regexp response)
-        (match-string 1 response)
-      response)))
+  (yapilot--generate-code (format yapilot-complete-prompt language code)))
 
 (defun yapilot-complete-region (start end)
   "Complete code based on selected region.
