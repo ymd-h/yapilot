@@ -52,8 +52,13 @@ The code is always concrete and understandable without omitting anything."
 
 Code
 ----
+```
+%s
+```
 "
-  "Prompt Template for Code Review."
+  "Prompt Template for Code Review.
+
+Source code will be inserted at %s by `format' function."
   :type '(string)
   :group 'yapilot)
 
@@ -109,7 +114,7 @@ Code
 
   (defun yapilot--review (code)
     "Review CODE."
-    (let ((prompt (concat yapilot-review-prompt code)))
+    (let ((prompt (format yapilot-review-prompt code)))
       (yapilot--chat-streaming prompt)))
 
   (defun yapilot-review-region (start end)
