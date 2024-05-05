@@ -46,12 +46,12 @@
   "You are skillful and professional programmer.
 You will answer user's question with programming code.
 The code is always concrete and understandable without omitting anything."
-  "System Prompt to guide LLM"
+  "System Prompt to guide LLM."
   :type '(string)
   :group 'yapilot)
 
 (defun yapilot--make-llm-prompt (prompt)
-  "Make LLM prompt from PROMPT"
+  "Make LLM prompt from PROMPT."
   (if (fboundp 'llm-make-chat-prompt)
       (llm-make-chat-prompt prompt :context yapilot-llm-system-prompt) ; llm v1.4.0+
     (make-llm-chat-prompt
@@ -128,7 +128,7 @@ partial code at %2s by `format' function"
   (if (listp mode-name) (car mode-name) mode-name))
 
 (defun yapilot--response-buffer ()
-  "Create and display yapilot response buffer"
+  "Create and display yapilot response buffer."
   (let ((buffer (generate-new-buffer yapilot-response-buffer-name)))
     (save-excursion
       (with-current-buffer buffer
@@ -192,7 +192,7 @@ Argument END is region end."
   (yapilot--review (buffer-string)))
 
 (defun yapilot--generate-code (prompt)
-  "Generate code based on PROMPT"
+  "Generate code based on PROMPT."
   (let ((response (yapilot--chat prompt)))
     (if (string-match yapilot--code-regexp response)
         (match-string 1 response)
