@@ -78,6 +78,23 @@ instruction at %2$s by `format' function."
   :type '(string)
   :group 'yapilot)
 
+(defcustom yapilot-complete-prompt
+  "Complete the following %1$s code.
+You must generate only the source code.
+
+Partial Code
+------------
+```
+%2$s
+```
+"
+  "Prompt Template for Code Completion.
+
+Programming Language name will be inserted at %1$s,
+partial code at %2s by `format' function"
+  :type '(string)
+  :group 'yapilot)
+
 (defvar yapilot--code-regexp
   "```.*
 \\(\\(.*\n\\)*.*\\)
@@ -88,6 +105,10 @@ instruction at %2$s by `format' function."
   "Validate provider."
   (if (null yapilot-llm-provider)
       (error "LLM provider is nil.  Please set one of the `llm' providers to `yapilot-llm-provider'")))
+
+(defun yapilot--language ()
+  "Determine programming language from major mode."
+  (if (listp mode-name) (car mode-name) mode-name))
 
 (defun yapilot--response-buffer ()
   "Create and display yapilot response buffer"
@@ -170,10 +191,30 @@ Argument END is region end."
       (save-excursion
         (goto-char end)
         (insert (yapilot--generate
-         (if (listp mode-name)
-             (car mode-name)
-           mode-name)
-         (buffer-substring start end))))
+                 (yapilot--language)
+                 (buffer-substring start end))))
+    (message "Region is not set")))
+
+(defun yapilot--complete (language code)
+  "Complete LANGUAGE CODE."
+  (let* ((prompt (format yapilot-complete-prompt language code))
+         (response (yapilot--chat prompt)))
+    (if (string-match yapilot--code-regexp response)
+        (match-string 1 response)
+      response)))
+
+(defun yapilot-complete-region (start end)
+  "Complete code based on selected region.
+Argument START is region start.
+Argument END is region end."
+  (interactive "r")
+  (if (use-region-p)
+      (let ((code (yapilot--complete
+                   (yapilot--language)
+                   (buffer-substring start end))))
+        (goto-char start)
+        (delete-region start end)
+        (insert code))
     (message "Region is not set")))
 
 (provide 'yapilot)
