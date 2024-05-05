@@ -1,4 +1,5 @@
 (toggle-debug-on-error)
+(setq llm-log t)
 
 (add-to-list
  'load-path
