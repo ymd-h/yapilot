@@ -33,7 +33,7 @@
      (list (make-llm-chat-prompt-interaction :role 'user :content prompt)))))
 
 (defcustom yapilot-response-buffer-name
-  "yapilot" "Buffer name of LLM response."
+  "*yapilot*" "Buffer name of LLM response."
   :type '(string)
   :group 'yapilot)
 
