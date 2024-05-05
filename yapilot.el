@@ -4,7 +4,7 @@
 
 ;; Author: Hiroyuki Yamada
 ;; Created: 2024-05-04
-;; Package-Requires: (llm)
+;; Package-Requires: (llm markdown-mode)
 
 
 ;; This file is not part of GNU Emacs.
@@ -15,6 +15,7 @@
 
 ;;; Code:
 (require 'llm)
+(require 'markdown-mode)
 
 
 (defgroup yapilot nil
@@ -52,10 +53,19 @@ Code
   (if (null yapilot-llm-provider)
       (error "LLM provider is nil.  Please set one of the `llm' providers to `yapilot-llm-provider'")))
 
+(defun yapilot--response-buffer ()
+  "Create and display yapilot response buffer"
+  (let ((buffer (generate-new-buffer yapilot-response-buffer-name)))
+    (save-excursion
+      (with-current-buffer buffer
+        (display-buffer buffer)
+        (markdown-mode)))
+    buffer))
+
 (defun yapilot--show-response (response)
   "Show LLM RESPONSE at new buffer."
   (save-excursion
-    (let ((buffer (generate-new-buffer yapilot-response-buffer-name)))
+    (let ((buffer (yapilot--response-buffer)))
       (with-current-buffer buffer
         (progn (insert response)
                (display-buffer buffer))))))
@@ -82,10 +92,9 @@ Code
   (defun yapilot--chat-streaming (prompt)
     "Chat with LLM streaming using PROMPT."
     (yapilot--validate)
-    (let* ((buffer (generate-new-buffer yapilot-response-buffer-name))
+    (let* ((buffer (yapilot--response-buffer))
            (callback #'(lambda (response)
                          (yapilot--show-response-streaming buffer response))))
-      (display-buffer buffer)
       (llm-chat-streaming yapilot-llm-provider
                           (yapilot--make-llm-prompt prompt) callback callback #'ignore)))
 
