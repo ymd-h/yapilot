@@ -1,0 +1,65 @@
+#+TITLE: yapilot.el: Yet Another (Co)Pilot for Emacs
+
+
+* yapilot.el
+yapilot.el is an emacs packages for code review and generation using
+large language model (LLM).
+
+This package is based on [[https://github.com/ahyatt/llm][ahyatt/llm]] package.
+You can select one of the llm providers,
+and set to ~yapilot-llm-provider~.
+
+The following config is an example
+using yapilot.el with [[https://ollama.com/library/phi3][Phi-3 Mini through Ollama]].
+
+#+begin_src elisp
+(use-package yapilot
+  :init
+  (require 'llm-ollama)
+  :config
+  (setq yapilot-llm-provider (make-llm-ollama :chat-model "phi3")))
+#+end_src
+
+
+
+* Interactive Functions
+- ~yapilot-review-region~
+  - Review code at selected region.
+  - Result will be shown newly created buffer ~*yapilot*~.
+- ~yapilot-review-buffer~
+  - Review code at entire buffer.
+  - Result will be shown newly created buffer ~*yapilot*~.
+- ~yapilot-generate-region~
+  - Generate code based on selected instruction.
+  - Result will be inserted just after selected instruction.
+  - Programming language will be determined from major mode.
+- ~yapilot-complete-region~
+  - Complete code based on selected (partial) code.
+  - Selected region will be replaced with generated code, too.
+  - Programming language will be determined from major mode.
+
+
+
+* Customization
+- ~yapilot-llm-system-prompt~
+  - System prompt for LLM.
+  - Internally this will be passed to ~context~ slot of ~llm-chat-prompt~ struct.
+- ~yapilot-response-buffer-name~
+  - Response buffer name used by Review.
+- ~yapilot-review-prompt~
+  - Prompt Template for Code Review.
+- ~yapilot-generate-prompt~
+  - Prompt Template for Code Generation.
+- ~yapilot-complete-prompt~
+  - Prompt Template for Code Completion.
+
+
+* Requirements
+The following packages are required.
+
+- [[https://github.com/ahyatt/llm][ahyatt/llm]]
+  - Used for LLM interface
+  - Hosted at [[https://elpa.gnu.org/packages/llm.html][GNU Elpa]]
+- [[https://github.com/jrblevin/markdown-mode][jrblevin/markdown-mode]]
+  - Used for major mode of Review Buffer.
+  - Hosted at [[https://elpa.nongnu.org/nongnu/markdown-mode.html][NonGNU ELPA]] and [[https://melpa.org/#/markdown-mode][MELPA]]
