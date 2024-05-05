@@ -84,53 +84,53 @@ Source code will be inserted at %s by `format' function."
         (progn (insert response)
                (display-buffer buffer))))))
 
-  (defun yapilot--show-response-streaming (buffer response)
-    "Show LLM (partial) RESPONSE at specified BUFFER."
-    (save-excursion
-      (with-current-buffer buffer
-        (erase-buffer)
-        (insert response))))
+(defun yapilot--show-response-streaming (buffer response)
+  "Show LLM (partial) RESPONSE at specified BUFFER."
+  (save-excursion
+    (with-current-buffer buffer
+      (erase-buffer)
+      (insert response))))
 
-  (defun yapilot--chat (prompt)
-    "Chat with LLM using PROMPT."
-    (yapilot--validate)
-    (llm-chat yapilot-llm-provider (yapilot--make-llm-prompt prompt)))
+(defun yapilot--chat (prompt)
+  "Chat with LLM using PROMPT."
+  (yapilot--validate)
+  (llm-chat yapilot-llm-provider (yapilot--make-llm-prompt prompt)))
 
-  (defun yapilot--chat-async (prompt)
-    "Chat with LLM asyncronically using PROMPT."
-    (yapilot--validate)
-    (llm-chat-async
-     yapilot-llm-provider
-     (yapilot--make-llm-prompt prompt) #'yapilot--show-response #'ignore))
+(defun yapilot--chat-async (prompt)
+  "Chat with LLM asyncronically using PROMPT."
+  (yapilot--validate)
+  (llm-chat-async
+   yapilot-llm-provider
+   (yapilot--make-llm-prompt prompt) #'yapilot--show-response #'ignore))
 
-  (defun yapilot--chat-streaming (prompt)
-    "Chat with LLM streaming using PROMPT."
-    (yapilot--validate)
-    (let* ((buffer (yapilot--response-buffer))
-           (callback #'(lambda (response)
-                         (yapilot--show-response-streaming buffer response))))
-      (llm-chat-streaming yapilot-llm-provider
-                          (yapilot--make-llm-prompt prompt) callback callback #'ignore)))
+(defun yapilot--chat-streaming (prompt)
+  "Chat with LLM streaming using PROMPT."
+  (yapilot--validate)
+  (let* ((buffer (yapilot--response-buffer))
+         (callback #'(lambda (response)
+                       (yapilot--show-response-streaming buffer response))))
+    (llm-chat-streaming yapilot-llm-provider
+                        (yapilot--make-llm-prompt prompt) callback callback #'ignore)))
 
-  (defun yapilot--review (code)
-    "Review CODE."
-    (let ((prompt (format yapilot-review-prompt code)))
-      (yapilot--chat-streaming prompt)))
+(defun yapilot--review (code)
+  "Review CODE."
+  (let ((prompt (format yapilot-review-prompt code)))
+    (yapilot--chat-streaming prompt)))
 
-  (defun yapilot-review-region (start end)
-    "Review code at selected region.
+(defun yapilot-review-region (start end)
+  "Review code at selected region.
 Argument START is region start.
 Argument END is region end."
-    (interactive "r")
-    (if (use-region-p)
-        (yapilot--review (buffer-substring start end))
-      (message "Region is not set")))
+  (interactive "r")
+  (if (use-region-p)
+      (yapilot--review (buffer-substring start end))
+    (message "Region is not set")))
 
-  (defun yapilot-review-buffer ()
-    "Review code at whole buffer."
-    (interactive)
-    (yapilot--review (buffer-string)))
+(defun yapilot-review-buffer ()
+  "Review code at whole buffer."
+  (interactive)
+  (yapilot--review (buffer-string)))
 
 
-  (provide 'yapilot)
+(provide 'yapilot)
 ;;; yapilot.el ends here
