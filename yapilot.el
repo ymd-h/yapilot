@@ -25,11 +25,20 @@
 (defvar yapilot-llm-provider nil
   "LLM provider for yapilot.")
 
+(defcustom yapilot-llm-system-prompt
+  "You are skillful and professional programmer.
+You will answer user's question with programming code.
+The code is always concrete and understandable without omitting anything."
+  "System Prompt to guide LLM"
+  :type '(string)
+  :group 'yapilot)
+
 (defun yapilot--make-llm-prompt (prompt)
   "Make LLM prompt from PROMPT"
   (if (fboundp 'llm-make-chat-prompt)
-      (llm-make-chat-prompt prompt)  ; llm v1.4.0+
+      (llm-make-chat-prompt prompt :context yapilot-llm-system-prompt) ; llm v1.4.0+
     (make-llm-chat-prompt
+     :context yapilot-llm-system-prompt
      :interactions
      (list (make-llm-chat-prompt-interaction :role 'user :content prompt)))))
 
