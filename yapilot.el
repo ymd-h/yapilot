@@ -185,7 +185,10 @@ Argument END is region end."
 (defun yapilot-generate-region (start end)
   "Generate code based on selected region.
 Argument START is region start.
-Argument END is region end."
+Argument END is region end.
+
+Unlike `yapilot-complete-region',
+generated code is inserted just after selected instruction."
   (interactive "r")
   (if (use-region-p)
       (save-excursion
@@ -206,7 +209,10 @@ Argument END is region end."
 (defun yapilot-complete-region (start end)
   "Complete code based on selected region.
 Argument START is region start.
-Argument END is region end."
+Argument END is region end.
+
+Unlike `yapilot-generate-region',
+selected region is replaced with generated code, too."
   (interactive "r")
   (if (use-region-p)
       (let ((code (yapilot--complete
