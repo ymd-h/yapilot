@@ -11,11 +11,11 @@
       in rec {
         devShells.default = pkgs.mkShell {
           buildInputs = [
-          pkgs.ollama
-          ((pkgs.emacsPackagesFor pkgs.emacs).emacsWithPackages (epkgs: [
-            epkgs.llm
-            epkgs.markdown-mode
-          ]))
+            pkgs.ollama
+            ((pkgs.emacsPackagesFor pkgs.emacs).emacsWithPackages (epkgs: [
+              epkgs.llm
+              epkgs.markdown-mode
+            ]))
           ];
         };
       });
