@@ -9,12 +9,21 @@
       let
         pkgs = import nixpkgs { inherit system; };
       in rec {
+        lib.mkPackage = ({ epkgs }: (epkgs.trivialBuild rec {
+          pname = "yapilot";
+          version = "v1.0.0";
+          src = ./.;
+          packageRequires = with epkgs; [llm markdown-mode];
+          buildInputs = packageRequires;
+        }));
+
         devShells.default = pkgs.mkShell {
           buildInputs = [
             pkgs.ollama
             ((pkgs.emacsPackagesFor pkgs.emacs).emacsWithPackages (epkgs: [
               epkgs.llm
               epkgs.markdown-mode
+              (lib.mkPackage { inherit epkgs; })
             ]))
           ];
         };
