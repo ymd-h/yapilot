@@ -148,12 +148,6 @@ partial code at %2s by `format' function"
           (insert response)
           (display-buffer buffer))))))
 
-(defun yapilot--show-response-streaming (buffer response)
-  "Show LLM (partial) RESPONSE at specified BUFFER."
-  (with-current-buffer buffer
-      (erase-buffer)
-      (insert response)))
-
 (defun yapilot--chat (prompt)
   "Chat with LLM using PROMPT."
   (yapilot--validate)
@@ -170,10 +164,13 @@ partial code at %2s by `format' function"
   "Chat with LLM streaming using PROMPT."
   (yapilot--validate)
   (let* ((buffer (yapilot--response-buffer))
-         (callback #'(lambda (response)
-                       (yapilot--show-response-streaming buffer response))))
+         (callback (lambda (response) (with-current-buffer buffer
+                                        (erase-buffer) (insert response))))
+         (finalize (lambda (response) (with-current-buffer buffer
+                                        (erase-buffer) (insert response)
+                                        (gfm-view-mode)))))
     (llm-chat-streaming yapilot-llm-provider
-                        (yapilot--make-llm-prompt prompt) callback callback #'ignore)))
+                        (yapilot--make-llm-prompt prompt) callback finalize #'ignore)))
 
 (defun yapilot--review (code)
   "Review CODE."
