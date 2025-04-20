@@ -11,7 +11,7 @@
       in rec {
         lib.mkPackage = ({ epkgs }: (epkgs.trivialBuild rec {
           pname = "yapilot";
-          version = "v1.0.0";
+          version = "v1.0.1";
           src = ./.;
           packageRequires = with epkgs; [llm markdown-mode];
           buildInputs = packageRequires;
