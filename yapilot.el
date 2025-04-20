@@ -134,7 +134,8 @@ partial code at %2s by `format' function"
     (save-excursion
       (with-current-buffer buffer
         (display-buffer buffer)
-        (markdown-mode)))
+        (gfm-mode)
+        (insert "Waiting for LLM response...")))
     buffer))
 
 (defun yapilot--show-response (response)
@@ -142,8 +143,10 @@ partial code at %2s by `format' function"
   (save-excursion
     (let ((buffer (yapilot--response-buffer)))
       (with-current-buffer buffer
-        (progn (insert response)
-               (display-buffer buffer))))))
+        (progn
+          (erase-buffer)
+          (insert response)
+          (display-buffer buffer))))))
 
 (defun yapilot--show-response-streaming (buffer response)
   "Show LLM (partial) RESPONSE at specified BUFFER."
