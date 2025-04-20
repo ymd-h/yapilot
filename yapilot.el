@@ -150,10 +150,9 @@ partial code at %2s by `format' function"
 
 (defun yapilot--show-response-streaming (buffer response)
   "Show LLM (partial) RESPONSE at specified BUFFER."
-  (save-excursion
-    (with-current-buffer buffer
+  (with-current-buffer buffer
       (erase-buffer)
-      (insert response))))
+      (insert response)))
 
 (defun yapilot--chat (prompt)
   "Chat with LLM using PROMPT."
