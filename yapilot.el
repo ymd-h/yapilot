@@ -4,7 +4,7 @@
 
 ;; Author: Hiroyuki Yamada
 ;; Created: 2024-05-04
-;; Package-Version: 1.0.0
+;; Package-Version: 1.0.1
 ;; Package-Requires: (llm markdown-mode)
 
 
