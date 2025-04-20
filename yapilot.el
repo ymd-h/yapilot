@@ -146,7 +146,8 @@ partial code at %2s by `format' function"
         (progn
           (erase-buffer)
           (insert response)
-          (display-buffer buffer))))))
+          (display-buffer buffer)
+          (gfm-view-mode))))))
 
 (defun yapilot--error-callback (error-symbol error-message)
   "Error callback function.
