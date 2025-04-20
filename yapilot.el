@@ -148,6 +148,11 @@ partial code at %2s by `format' function"
           (insert response)
           (display-buffer buffer))))))
 
+(defun yapilot--error-callback (error-symbol error-message)
+  "Error callback function.
+ERROR-SYMBOL and ERROR-MESSAGE will be passed to `error'."
+  (error "Error %1$s: %2$s" error-symbol error-message))
+
 (defun yapilot--chat (prompt)
   "Chat with LLM using PROMPT."
   (yapilot--validate)
@@ -158,7 +163,7 @@ partial code at %2s by `format' function"
   (yapilot--validate)
   (llm-chat-async
    yapilot-llm-provider
-   (yapilot--make-llm-prompt prompt) #'yapilot--show-response #'ignore))
+   (yapilot--make-llm-prompt prompt) #'yapilot--show-response #'yapilot--error-callback))
 
 (defun yapilot--chat-streaming (prompt)
   "Chat with LLM streaming using PROMPT."
@@ -170,7 +175,8 @@ partial code at %2s by `format' function"
                                         (erase-buffer) (insert response)
                                         (gfm-view-mode)))))
     (llm-chat-streaming yapilot-llm-provider
-                        (yapilot--make-llm-prompt prompt) callback finalize #'ignore)))
+                        (yapilot--make-llm-prompt prompt)
+                        callback finalize #'yapilot--error-callback)))
 
 (defun yapilot--review (code)
   "Review CODE."
